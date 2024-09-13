@@ -2,6 +2,7 @@
 
 from tree import *
 from networkx import *
+from displayTree import *
 #trial
 def main():
     sourceCode = "sourceCode.txt"
@@ -9,6 +10,7 @@ def main():
         for line in file:
             myTree = Tree()
             myTree.createTree(line)
+            draw(myTree.root)
             a = "deu certo"
             print("deu certo")
 
