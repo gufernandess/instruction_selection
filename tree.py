@@ -97,7 +97,8 @@ class Tree():
                     else:
                         self.scope[-1].right = newNode
                         whereToInsert = LEFT_CHILD
-                    previousNode = newNode
+                    if (newNode.instruction != "FP" and newNode.instruction[:5] != "CONST" and newNode.instruction[:4] != "TEMP"):
+                        previousNode = newNode
                 
                 if currentInstruction in self.reducibleInstructions:
                     self.scope.append(newNode)
