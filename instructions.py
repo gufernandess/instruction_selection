@@ -50,7 +50,7 @@ def getInstructions(patterns):
         
         instruction = PATTERNS_INSTRUCTIONS[pattern]
             
-        if(pattern == "TEMP"):
+        if(pattern == "TEMP" or pattern == "FP"):
             reg2 = reg1
             reg1 += 1
             

@@ -2,7 +2,6 @@ from tree import *
 
 class JouetteArchitecture:
     def __init__(self):
-        # Custos das instruções na arquitetura Jouette
         self.instruction_costs = {
             "ADD": 1,
             "MUL": 1,
@@ -19,7 +18,6 @@ class JouetteArchitecture:
             "MEM": 1
         }
         
-        # Mapeamento de instruções redutíveis para padrões de máquina
         self.instruction_patterns = {
             "ADD": "ADD {src1}, {src2}",
             "MUL": "MUL {src1}, {src2}",
