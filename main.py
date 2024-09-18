@@ -11,8 +11,6 @@ def main():
             myTree = Tree()
             myTree.createTree(line)
             draw(myTree.root)
-            a = "deu certo"
-            print("deu certo")
 
 if __name__ == "__main__":
     main()

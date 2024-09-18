@@ -1,15 +1,10 @@
 from typing import *
+from node import Node
 
 LEFT_CHILD = False
 RIGHT_CHILD = True
-global whereToinsert
 
-class Node():
-    def __init__(self, instruction):
-        self.instruction:str = instruction
-        self.parent:Node = None
-        self.left:Node = None
-        self.right:Node = None
+global whereToinsert
 
 class Tree():
     def __init__(self, root = None):
@@ -55,8 +50,8 @@ class Tree():
         """
         whereToInsert = LEFT_CHILD #ORIGINAL
         #global whereToinsert
-        currentNode:Node = None
-        previousNode:Node = None
+        currentNode = None
+        previousNode = None
         
         for indexInstruction in range(len(spacelessLinearCode)):
             #nonlocal whereToinsert
@@ -114,4 +109,3 @@ class Tree():
                     previousNode = self.scope[-1]
             elif (currentInstruction == ","):
                 whereToInsert = RIGHT_CHILD #COPY
-        
