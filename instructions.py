@@ -5,23 +5,23 @@
 '''
 
 PATTERNS_INSTRUCTIONS = {
-    "+": "ADD r{i} <- {j} + {k}",
-    "*": "MUL r{i} <- {j} * {k}",
-    "-": "SUB r{i} <- {j} - {k}",
-    "/": "DIV r{i} <- {j} / {k}",
-    "+ -> CONST": "ADDI r{i} <- {j} + {c}",
-    "+ ---> CONST": "ADDI r{i} <- {j} + {c}",
-    "CONST": "ADDI r{i} <- r{j} + {c}",
-    "- ---> CONST": "SUBI r{i} <- {j} - {c}",
-    "MEM --> + ---> CONST": "LOAD r{i} <- M[{j} + {c}]",
-    "MEM --> + -> CONST" : "LOAD r{i} <- M[{j} + {c}]",
-    "MEM --> CONST" : "LOAD r{i} <- M[r{j} + {c}]",
-    "MEM": "LOAD r{i} <- M[r{j}]",
-    "MOVE -> MEM --> + ---> CONST": "STORE M[{j} + {c}] <- r{i}",
-    "MOVE -> MEM --> + -> CONST": "STORE M[{j} + {c}] <- r{i}",
-    "MOVE -> MEM --> CONST": "STORE M[r{j} + {c}] <- r{i}",
-    "MOVE -> MEM": "STORE M[r{j}] <- r{i}",
-    "MOVE -> MEM ===> MEM": "MOVEM M[r{j}] <- M[r{i}]",
+    0: "ADD r{i} <- {j} + {k}", # +
+    1: "MUL r{i} <- {j} * {k}", # *
+    2: "SUB r{i} <- {j} - {k}", # -
+    3: "DIV r{i} <- {j} / {k}", # /
+    4: "ADDI r{i} <- {j} + {c}", # + -> CONST
+    5: "ADDI r{i} <- {j} + {c}", # + ---> CONST
+    6: "ADDI r{i} <- r{j} + {c}", # CONST
+    7: "SUBI r{i} <- {j} - {c}", # - ---> CONST
+    8: "LOAD r{i} <- M[{j} + {c}]", # MEM --> + ---> CONST
+    9: "LOAD r{i} <- M[{j} + {c}]", # MEM --> + -> CONST
+    10: "LOAD r{i} <- M[r{j} + {c}]", # MEM --> CONST
+    11: "LOAD r{i} <- M[r{j}]", # MEM
+    12: "STORE M[{j} + {c}] <- r{i}", # MOVE -> MEM --> + ---> CONST
+    13: "STORE M[{j} + {c}] <- r{i}", # MOVE -> MEM --> + -> CONST
+    14: "STORE M[r{j} + {c}] <- r{i}", # MOVE -> MEM --> CONST
+    15: "STORE M[r{j}] <- r{i}", # MOVE -> MEM
+    16: "MOVEM M[r{j}] <- M[r{i}]", # MOVE -> MEM ===> MEM
 }
 
 '''
@@ -54,56 +54,56 @@ def getInstructions(patterns):
             reg2 = reg1
             reg1 += 1
             
-        if(pattern in ["+","*","-","/"]):
+        if(pattern in [0, 1, 2, 3]):
             print(i+1, instruction.format(i=reg2, j=node.left.getSingleValue(reg1), k=node.right.getSingleValue(reg2)))
 
-        if(pattern in ["+ -> CONST", "+ ---> CONST", "- ---> CONST"]):
+        if(pattern in [4, 5, 7]):
             right = node.right.getSingleValue(reg1) 
             left = node.left.getSingleValue(reg1+1)
 
-            if(pattern == "+ -> CONST" or pattern == "- ---> CONST"):
+            if(pattern == 4 or pattern == 7):
                 print(i+1, instruction.format(i=reg2, j=left, c=right))
 
             else:
                 print(i+1, instruction.format(i=reg2, j=right, c=left))   
             
-        if(pattern == "CONST"):
+        if(pattern == 6):
             print(i+1, instruction.format(i=reg2, j=0, c=node.getSingleValue(reg1)))
             
-        if (pattern in ["MEM --> + ---> CONST", "MEM --> + -> CONST"]):
+        if (pattern in [8, 9]):
             child = node.getChildren()[0]
             right = child.right.getSingleValue(reg1) 
             left = child.left.getSingleValue(reg1+1)
 
-            if (pattern == "MEM --> + ---> CONST"):
+            if (pattern == 8):
                 print(i+1, instruction.format(i=reg2, j=left, c=right))
             else:
                 print(i+1, instruction.format(i=reg2, j=right, c=left))  
             
-        if(pattern == "MEM --> CONST"):
+        if(pattern == 10):
             child = node.getChildren()[0]
 
             print(i+1, instruction.format(i=reg2, j=0, c=child.getSingleValue(reg1)))
 
-        if (pattern == "MEM"):
+        if (pattern == 11):
             print(i+1, instruction.format(i=reg2, j=reg2, c=0))
 
-        if(pattern in ["MOVE -> MEM --> + ---> CONST", "MOVE -> MEM --> + -> CONST"]):
+        if(pattern in [12, 13]):
             child = node.getChildren()[0].getChildren()[0]
             right = child.right.getSingleValue(reg1) 
             left = child.left.getSingleValue(reg1+1)
 
-            if(pattern == "MOVE -> MEM --> + ---> CONST"):
+            if(pattern == 12):
                 print(i+1, instruction.format(i=reg2, j=left, c=right))
             else:
                 print(i+1, instruction.format(i=reg2, j=right, c=left))  
 
-        if(pattern == "MOVE -> MEM --> CONST"):
+        if(pattern == 14):
             child = node.getChildren()[0].getChildren()[0]
             print(i+1, instruction.format(i=reg2, j=0, c=child.getSingleValue(reg1)))
 
-        if(pattern == "MOVE -> MEM"):
+        if(pattern == 15):
             print(i+1, instruction.format(i=reg2, j=reg1, c=0))
             
-        if(pattern == "MOVE -> MEM ===> MEM"):
+        if(pattern == 16):
             print(i+1, instruction.format(i=reg2, j=reg1))

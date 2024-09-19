@@ -4,9 +4,24 @@ class Node():
         self.parent = None
         self.left = None
         self.right = None
+        self.tile = []
 
     def getChildren(self):
         return (self.left, self.right)
+    
+    def getLeaves(self):
+        leaves = []
+
+        if(self.left == None and self.right == None):
+            leaves.append(self)
+        
+        else:
+            if(self.left):
+                leaves += self.left.getLeaves()
+            if(self.right):
+                leaves += self.right.getLeaves()
+
+        return leaves
     
     def getSingleValue(self, reg):
         if(self.instruction[:5] == "CONST"):
