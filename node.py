@@ -5,6 +5,8 @@ class Node():
         self.left = None
         self.right = None
         self.tile = []
+        self.isRoot = False
+        self.pattern = -1
 
     def getChildren(self):
         return (self.left, self.right)

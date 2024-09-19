@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from tree import *
-from networkx import *
-from displayTree import *
+from instructions import *
+#from networkx import *
+#from displayTree import *
 
 if __name__ == "__main__":
     sourceCode = "sourceCode.txt"
@@ -10,7 +11,9 @@ if __name__ == "__main__":
         for line in file:
             myTree = Tree()
             myTree.createTree(line)
-            draw(myTree.root)
+            leaves =myTree.root.getLeaves()
+            getTiles(leaves)
+            #draw(myTree.root)
     
 """
 Considerações:

@@ -3,25 +3,28 @@
     assim, a partir de um padrão de um nó da árvore de expressão, é possível gerar
     a instrução de máquina correspondente.
 '''
+import re
+from tree import *
 
 PATTERNS_INSTRUCTIONS = {
-    0: "ADD r{i} <- {j} + {k}", # +
-    1: "MUL r{i} <- {j} * {k}", # *
-    2: "SUB r{i} <- {j} - {k}", # -
-    3: "DIV r{i} <- {j} / {k}", # /
-    4: "ADDI r{i} <- {j} + {c}", # + -> CONST
-    5: "ADDI r{i} <- {j} + {c}", # + ---> CONST
-    6: "ADDI r{i} <- r{j} + {c}", # CONST
-    7: "SUBI r{i} <- {j} - {c}", # - ---> CONST
-    8: "LOAD r{i} <- M[{j} + {c}]", # MEM --> + ---> CONST
-    9: "LOAD r{i} <- M[{j} + {c}]", # MEM --> + -> CONST
-    10: "LOAD r{i} <- M[r{j} + {c}]", # MEM --> CONST
-    11: "LOAD r{i} <- M[r{j}]", # MEM
-    12: "STORE M[{j} + {c}] <- r{i}", # MOVE -> MEM --> + ---> CONST
-    13: "STORE M[{j} + {c}] <- r{i}", # MOVE -> MEM --> + -> CONST
-    14: "STORE M[r{j} + {c}] <- r{i}", # MOVE -> MEM --> CONST
-    15: "STORE M[r{j}] <- r{i}", # MOVE -> MEM
-    16: "MOVEM M[r{j}] <- M[r{i}]", # MOVE -> MEM ===> MEM
+    0: "TEMP r{i}", #TEMP
+    1: "ADD r{i} <- {j} + {k}", # +
+    2: "MUL r{i} <- {j} * {k}", # *
+    3: "SUB r{i} <- {j} - {k}", # -
+    4: "DIV r{i} <- {j} / {k}", # /
+    5: "ADDI r{i} <- {j} + {c}", # + -> CONST
+    6: "ADDI r{i} <- {j} + {c}", # + ---> CONST
+    7: "ADDI r{i} <- r{j} + {c}", # CONST
+    8: "SUBI r{i} <- {j} - {c}", # - ---> CONST
+    9: "LOAD r{i} <- M[{j} + {c}]", # MEM --> + ---> CONST
+    10: "LOAD r{i} <- M[{j} + {c}]", # MEM --> + -> CONST
+    11: "LOAD r{i} <- M[r{j} + {c}]", # MEM --> CONST
+    12: "LOAD r{i} <- M[r{j}]", # MEM
+    13: "STORE M[{j} + {c}] <- r{i}", # MOVE -> MEM --> + ---> CONST
+    14: "STORE M[{j} + {c}] <- r{i}", # MOVE -> MEM --> + -> CONST
+    15: "STORE M[r{j} + {c}] <- r{i}", # MOVE -> MEM --> CONST
+    16: "STORE M[r{j}] <- r{i}", # MOVE -> MEM
+    17: "MOVEM M[r{j}] <- M[r{i}]", # MOVE -> MEM ===> MEM
 }
 
 '''
@@ -107,3 +110,68 @@ def getInstructions(patterns):
             
         if(pattern == 16):
             print(i+1, instruction.format(i=reg2, j=reg1))
+
+def isConst(node:Node):
+    return re.match(r'CONST.*?', node.instruction)
+
+
+def mult(node:Node):
+    0
+
+def sub(node:Node):
+    0
+
+def div(node:Node):
+    0
+
+def mem(node:Node):
+    0
+
+def mov(node:Node):
+    0
+
+def add(node:Node):
+    0
+
+def const(node:Node):
+    node.pattern = 7
+    node.tile = [node]
+    node.isRoot = True
+
+def temp(node:Node):
+    node.pattern = 0
+    node.tile = [node]
+    node.isRoot = True
+
+def updateList(list:List):
+    newList = []
+    for i in list:
+        if(i.parent):
+            if(i.parent not in newList):
+                newList.append(i.parent)
+    
+    getTiles(newList)
+
+def findPattern(node:Node):
+    if(node.instruction == '+'):
+        add(node)
+    elif(node.instruction == '*'):
+        mult(node)
+    elif(node.instruction == '-'):
+        sub(node)
+    elif(node.instruction == '/'):
+        div(node)
+    elif(node.instruction == 'MEM'):
+        mem(node)
+    elif(node.instruction == 'MOVE'):
+        mov(node)
+    elif(isConst):
+        const(node)
+    else:
+        temp(node)
+
+def getTiles(list): 
+    for i in list:
+        findPattern(i)
+    updateList(list)
+    
