@@ -64,7 +64,9 @@ class Tree():
         currentNode = None
         previousNode = None
         
-        for indexInstruction in range(len(spacelessLinearCode)):
+        indexInstruction = 0
+
+        while (indexInstruction < len(spacelessLinearCode)):
             #nonlocal whereToinsert
             currentInstruction = spacelessLinearCode[indexInstruction]
             
@@ -110,9 +112,11 @@ class Tree():
                     self.scope.append(newNode)
                 
                 if (jumpIndex):
-                    indexInstruction +=1
+                    indexInstruction +=2
+                    continue
                     
             elif (currentInstruction == "("):
+                indexInstruction += 1
                 continue
             elif (currentInstruction == ")"):
                 self.scope.pop()
@@ -120,3 +124,5 @@ class Tree():
                     previousNode = self.scope[-1]
             elif (currentInstruction == ","):
                 whereToInsert = RIGHT_CHILD #COPY
+                
+            indexInstruction += 1
