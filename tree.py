@@ -14,6 +14,17 @@ class Tree():
         self.irreducibleInstructions = ["CONST", "FP", "TEMP"]
         self.instructions = self.reducibleInstructions + self.irreducibleInstructions
         self.validSeparators = [",", "(", ")"]
+
+    def printTree(self, node: Node, indent: str = "", isRight: bool = False):
+        if node is not None:
+            prefix = "└── " if isRight else "┌── "
+            print(indent + prefix + node.instruction)
+            new_indent = indent + ("    " if isRight else "│   ")
+
+            if node.right is not None:
+                self.print_tree(node.right, new_indent, True)
+            if node.left is not None:
+                self.print_tree(node.left, new_indent, False)
         
     def isIrredutiableInstruction(self, instruction) -> bool:
         """

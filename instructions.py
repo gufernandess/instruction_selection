@@ -3,11 +3,11 @@
     assim, a partir de um padrão de um nó da árvore de expressão, é possível gerar
     a instrução de máquina correspondente.
 '''
-import re
+
 from tree import *
 
 PATTERNS_INSTRUCTIONS = {
-    0: "TEMP r{i}", #TEMP
+    0: "TEMP r{i}", # TEMP
     1: "ADD r{i} <- {j} + {k}", # +
     2: "MUL r{i} <- {j} * {k}", # *
     3: "SUB r{i} <- {j} - {k}", # -
@@ -57,62 +57,62 @@ def getInstructions(patterns):
             reg2 = reg1
             reg1 += 1
             
-        if(pattern in [0, 1, 2, 3]):
+        if(pattern in [1, 2, 3, 4]):
             print(i+1, instruction.format(i=reg2, j=node.left.getSingleValue(reg1), k=node.right.getSingleValue(reg2)))
 
-        if(pattern in [4, 5, 7]):
+        if(pattern in [5, 6, 8]):
             right = node.right.getSingleValue(reg1) 
             left = node.left.getSingleValue(reg1+1)
 
-            if(pattern == 4 or pattern == 7):
+            if(pattern == 5 or pattern == 8):
                 print(i+1, instruction.format(i=reg2, j=left, c=right))
 
             else:
                 print(i+1, instruction.format(i=reg2, j=right, c=left))   
             
-        if(pattern == 6):
+        if(pattern == 7):
             print(i+1, instruction.format(i=reg2, j=0, c=node.getSingleValue(reg1)))
             
-        if (pattern in [8, 9]):
+        if (pattern in [9, 10]):
             child = node.getChildren()[0]
             right = child.right.getSingleValue(reg1) 
             left = child.left.getSingleValue(reg1+1)
 
-            if (pattern == 8):
+            if (pattern == 9):
                 print(i+1, instruction.format(i=reg2, j=left, c=right))
             else:
                 print(i+1, instruction.format(i=reg2, j=right, c=left))  
             
-        if(pattern == 10):
+        if(pattern == 11):
             child = node.getChildren()[0]
 
             print(i+1, instruction.format(i=reg2, j=0, c=child.getSingleValue(reg1)))
 
-        if (pattern == 11):
+        if (pattern == 12):
             print(i+1, instruction.format(i=reg2, j=reg2, c=0))
 
-        if(pattern in [12, 13]):
+        if(pattern in [13, 14]):
             child = node.getChildren()[0].getChildren()[0]
             right = child.right.getSingleValue(reg1) 
             left = child.left.getSingleValue(reg1+1)
 
-            if(pattern == 12):
+            if(pattern == 13):
                 print(i+1, instruction.format(i=reg2, j=left, c=right))
             else:
                 print(i+1, instruction.format(i=reg2, j=right, c=left))  
 
-        if(pattern == 14):
+        if(pattern == 15):
             child = node.getChildren()[0].getChildren()[0]
             print(i+1, instruction.format(i=reg2, j=0, c=child.getSingleValue(reg1)))
 
-        if(pattern == 15):
+        if(pattern == 16):
             print(i+1, instruction.format(i=reg2, j=reg1, c=0))
             
-        if(pattern == 16):
+        if(pattern == 17):
             print(i+1, instruction.format(i=reg2, j=reg1))
 
 def isConst(node:Node):
-    return re.match(r'CONST.*?', node.instruction)
+    return node.instruction[:5] == 'CONST'
 
 
 def mult(node:Node):
