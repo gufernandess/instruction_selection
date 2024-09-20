@@ -22,9 +22,9 @@ class Tree():
             new_indent = indent + ("    " if isRight else "│   ")
 
             if node.right is not None:
-                self.print_tree(node.right, new_indent, True)
+                self.printTree(node.right, new_indent, True)
             if node.left is not None:
-                self.print_tree(node.left, new_indent, False)
+                self.printTree(node.left, new_indent, False)
         
     def isIrredutiableInstruction(self, instruction) -> bool:
         """
