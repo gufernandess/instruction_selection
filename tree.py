@@ -40,16 +40,6 @@ class Tree():
         """
         return instruction in ["CONST", "TEMP"]
         
-    def printTree(self, node: Node, indent: str = "", isRight: bool = False):
-        if node is not None:
-            prefix = "└── " if isRight else "┌── "
-            print(indent + prefix + node.instruction)
-            new_indent = indent + ("    " if isRight else "│   ")
-
-            if node.right is not None:
-                self.printTree(node.right, new_indent, True)
-            if node.left is not None:
-                self.printTree(node.left, new_indent, False)
                 
     def draw(self):
         self.__draw(self.root)
