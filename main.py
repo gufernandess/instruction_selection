@@ -3,35 +3,38 @@
 from tree import *
 from patterns import *
 from instructions import *
-# from networkx import *
-# from displayTree import *
 
 if __name__ == "__main__":
     source = "source.txt"
     with open(source,'r') as file:
+        instructionCounter = 1
         for line in file:
-            tree = Tree()
+            if (line != "\n") :
+                print(f"-=-=-=-=-=-=-=-=intrução {instructionCounter}-=-=-=-=-=-=-=")
+                print("\n-----Árvore-----")
+                tree = Tree()
 
-            tree.createTree(line)
+                tree.createTree(line)
 
-            tree.printTree(tree.root)
+                #print("Gustavo:")
 
-            print("\n\n")
+                #tree.printTree(tree.root)
 
-            patterns = traverseTree(tree.root)
+                #print("Gabriel")
 
-            for i in range(len(patterns)):
-                print(patterns[i][1])
+                tree.draw()
 
-            print("\n")
+                print("\n-----Custos-----\n")
 
-            print("Custo total = " + "" + str(calculateCost(patterns)))
+                patterns = traverseTree(tree.root)
 
-            print("\n")
+                for i in range(len(patterns)):
+                    print(patterns[i][1])
 
-            print(getInstructions(patterns))
-"""
-Considerações:
-    - Preciso averiguar melhor se esse "for line in file"
-    também extrai as linhas de breakline
-"""
+                print("\n")
+
+                print("Custo total = " + "" + str(calculateCost(patterns)))
+
+                print("\n-----INSTRUÇÕES ASSEMBLY-----")
+
+                print(getInstructions(patterns))
