@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from tree import *
 from patterns import *
 from instructions import *
-# from networkx import *
-# from displayTree import *
 
 if __name__ == "__main__":
     source = "source.txt"
@@ -29,9 +25,7 @@ if __name__ == "__main__":
 
             print("\n")
 
-            print(getInstructions(patterns))
-"""
-Considerações:
-    - Preciso averiguar melhor se esse "for line in file"
-    também extrai as linhas de breakline
-"""
+            instructions = getInstructions(patterns)
+
+            for instruction in instructions:
+                print(instruction)
