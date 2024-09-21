@@ -1,128 +1,127 @@
-from tree import *
+from node import Node
 
-class JouetteArchitecture:
-    def __init__(self):
-        self.instruction_costs = {
-            "ADD": 1,
-            "MUL": 1,
-            "SUB": 1,
-            "DIV": 1,
-            "ADDI": 1,
-            "SUBI": 1,
-            "LOAD" : 1,
-            "STORE" : 1,
-            "MOVEM": 2, 
+patterns = []
 
-            "TEMP": 0,
-            "CONST": 1,
-            "MEM": 1
-        }
-        
-        self.instruction_patterns = {
-            "ADD": "ADD {src1}, {src2}",
-            "MUL": "MUL {src1}, {src2}",
-            "SUB": "SUB {src1}, {src2}",
-            "DIV": "DIV {src1}, {src2}",
-            "ADDI": "ADDI {src}, {const}",
-            "SUBI": "SUBI {src}, {const}",
-            "LOAD": "LOAD {dest}, {src}",
-            "STORE": "STORE {src}, {dest}",
-            "MOVEM": "MOVEM {src}, {dest}",
+INSTRUCTION_COSTS = {
+    "TEMP": 0,
+    "FP": 1,
+    "+": 1,
+    "*": 1,
+    "-": 1,
+    "/": 1,
+    "+ -> CONST": 1,
+    "+ --> CONST": 1,
+    "CONST": 1,
+    "- --> CONST": 1,
+    "MEM -> + --> CONST" : 1,
+    "MEM -> + -> CONST": 1,
+    "MEM -> CONST": 1,
+    "MEM" : 1,
+    "MOVE -> MEM -> + --> CONST": 1,
+    "MOVE -> MEM -> + -> CONST": 1,
+    "MOVE -> MEM -> CONST": 1,
+    "MOVE -> MEM" : 1,
+    "MOVE -> MEM ===> MEM": 2,
+}
 
-            "TEMP": "USE TEMP {index}",
-            "CONST": "LOAD CONST {value}",
-            "MEM": "MEM LOAD/STORE"
-        }
 
-    def select_instruction(self, node: Node) -> Tuple[str, int]:
-        """
-        Seleciona a instrução e calcula o custo com base na árvore de instruções.
-        Identifica a necessidade de usar ADDI ou SUBI com base na presença de constantes.
-        """
-        instruction = node.instruction.split()[0]
-        parts = node.instruction.split()
-        
-        # Verifica se é uma operação aritmética
-        if instruction in ["ADD", "SUB"]:
-            left_is_const = "CONST" in parts[1]  # Verifica se o operando esquerdo é constante
-            right_is_const = "CONST" in parts[2]  # Verifica se o operando direito é constante
+def calculateCost(patterns):
+    cost = 0
+    for i in range(len(patterns)):
+        cost += INSTRUCTION_COSTS[patterns[i][1]]
 
-            if left_is_const and not right_is_const:
-                # Usar ADDI ou SUBI (constante à esquerda)
-                pattern = self.instruction_patterns[instruction + "I"]
-                return pattern, self.instruction_costs[instruction + "I"]
-            elif not left_is_const and right_is_const:
-                # Usar ADDI ou SUBI (constante à direita)
-                pattern = self.instruction_patterns[instruction + "I"]
-                return pattern, self.instruction_costs[instruction + "I"]
-            else:
-                # Usar ADD normal (sem constantes)
-                pattern = self.instruction_patterns[instruction]
-                return pattern, self.instruction_costs[instruction]
-        
-        # Instruções comuns como CONST, TEMP, etc.
-        elif instruction in self.instruction_patterns:
-            pattern = self.instruction_patterns[instruction]
-            cost = self.instruction_costs[instruction]
-            return pattern, cost
-        else:
-            raise ValueError(f"Instrução desconhecida: {instruction}")
+    return cost
+
+def traverseTree(node:Node):
+    if node is None:
+        return
     
-    def format_pattern(self, node: Node, pattern: str) -> str:
-        """
-        Formata o padrão da instrução com os operandos corretos.
-        """
-        parts = node.instruction.split()
-        if pattern.startswith("ADD") or pattern.startswith("SUB") or pattern.startswith("MUL") or pattern.startswith("DIV"):
-            return pattern.format(src1=parts[1], src2=parts[2])
-        elif pattern.startswith("ADDI") or pattern.startswith("SUBI"):
-            if "CONST" in parts[1]:  # Constante à esquerda
-                return pattern.format(const=parts[1].split()[1], src=parts[2])
-            else:  # Constante à direita
-                return pattern.format(src=parts[1], const=parts[2].split()[1])
-        elif pattern.startswith("LOAD CONST"):
-            return pattern.format(value=parts[1])
-        elif pattern.startswith("USE TEMP"):
-            return pattern.format(index=parts[1])
-        return pattern
+    if node.isUsed:
+        if node.right is not None:
+            traverseTree(node.right)
+        if node.left is not None:
+            traverseTree(node.left)
 
-        
-class InstructionSelector:
-    def __init__(self, tree: Tree, architecture: JouetteArchitecture):
-        self.tree = tree
-        self.architecture = architecture
-        self.generated_code = []
-        self.total_cost = 0
+    else:
+        patterns.append([node, treeToPattern(node)])
+    
+        traverseTree(node.right)
 
-    def generate(self, node: Node):
-        if node is None:
-            return
-        
-        # Pós-ordem: processar subárvores antes do nó atual
-        self.generate(node.left)
-        self.generate(node.right)
-        
-        # Selecionar instrução e calcular custo
-        pattern, cost = self.architecture.select_instruction(node)
-        formatted_instruction = self.architecture.format_pattern(node, pattern)
-        
-        # Adicionar instrução ao código gerado
-        self.generated_code.append(formatted_instruction)
-        self.total_cost += cost
+        traverseTree(node.left)
 
-    def select_instructions(self):
-        self.generate(self.tree.root)
-        return self.generated_code, self.total_cost
+    return patterns
 
-# Exemplo de uso
-tree = Tree()
-tree.createTree("MOVEM TEMP 1 CONST 2")  # Exemplo de código linear
-architecture = JouetteArchitecture()
-selector = InstructionSelector(tree, architecture)
-assembly_code, total_cost = selector.select_instructions()
 
-# Exibir código gerado e o custo total
-print("Código gerado:")
-for instr in assembly_code:
-    print(instr)
-print(f"Custo total: {total_cost}")
+def treeToPattern(node:Node):
+    pattern = ""
+
+    if(node.instruction[:5] == "CONST"):
+        pattern += "CONST"
+        node.isUsed = True
+    if(node.instruction[:4] == "TEMP"):
+        pattern += "TEMP"
+        node.isUsed = True
+    if(node.instruction == "FP"):
+        pattern += "FP"
+        node.isUsed = True
+    if(node.instruction == "+"):
+        pattern += "+"
+        node.isUsed = True
+        if(node.left.instruction[:5] == "CONST"):
+            pattern += " -> CONST"
+            node.left.isUsed = True
+        elif(node.right.instruction[:5] == "CONST"):
+            pattern += " --> CONST"
+            node.right.isUsed = True
+    if(node.instruction == "-"):
+        pattern += "-"
+        node.isUsed = True
+        if(node.right.instruction[:5] == "CONST"):
+            pattern += " --> CONST"
+            node.right.isUsed = True
+    if(node.instruction == "*"):
+        pattern += "*"
+        node.isUsed = True
+    if(node.instruction == "/"):
+        pattern += "/"
+        node.isUsed = True
+    if(node.instruction == "MEM"):
+        pattern += "MEM"
+        node.isUsed = True
+        if(node.left.instruction == "+"):
+            pattern += " -> +"
+            node.left.isUsed = True
+            if(node.left.right.instruction[:5] == "CONST"):
+                pattern += " --> CONST"
+                node.left.right.isUsed = True
+            elif(node.left.left.instruction[:5] == "CONST"):
+                pattern += " -> CONST"
+                node.left.left.isUsed = True
+        elif(node.left.instruction[:5] == "CONST"):
+            pattern += " -> CONST"
+            node.left.isUsed = True
+    if(node.instruction == "MOVE"):
+        pattern += "MOVE"
+        node.isUsed = True
+        if(node.left.instruction == "MEM" and node.right.instruction == "MEM"):
+            pattern += " -> MEM ===> MEM"
+            node.left.isUsed = True
+            node.right.isUsed = True
+        else:
+            if(node.left.instruction == "MEM"):
+                pattern += " -> MEM"
+                node.left.isUsed = True
+                if(node.left.left.instruction == "+"):
+                    pattern += " -> +"
+                    node.left.left.isUsed = True
+                    if(node.left.left.left.instruction[:5] == "CONST"):
+                        pattern += " -> CONST"
+                        node.left.left.left.isUsed = True
+                    else:
+                        pattern += " --> CONST"
+                        node.left.left.right.isUsed = True
+                elif(node.left.left.instruction[:5] == "CONST"):
+                    pattern += " -> CONST"
+                    node.left.left.isUsed = True
+
+    return pattern
