@@ -4,7 +4,7 @@ from tree import *
 from patterns import *
 from instructions import *
 
-if __name__ == "__main__":
+def main():
     source = "source.txt"
     with open(source,'r') as file:
         instructionCounter = 1
@@ -38,5 +38,8 @@ if __name__ == "__main__":
                 print("\n-----INSTRUÇÕES ASSEMBLY-----")
 
                 print(getInstructions(patterns))
-                
+
                 instructionCounter += 1
+
+if __name__ == "__main__":
+    main()
