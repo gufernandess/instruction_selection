@@ -8,7 +8,7 @@ def main():
         instructionCounter = 1
         for line in file:
             if (line != "\n") :
-                print(f"-=-=-=-=-=-=-=-=intrução {instructionCounter}-=-=-=-=-=-=-=")
+                print(f"-=-=-=-=-=-=-=-=Instrução {instructionCounter}-=-=-=-=-=-=-=")
                 print("\n-----Árvore-----")
                 tree = Tree()
 
@@ -27,12 +27,11 @@ def main():
 
                 print("Custo total = " + "" + str(calculateCost(patterns)))
 
-                print("\n-----INSTRUÇÕES ASSEMBLY-----")
-                
-                instructions = getInstructions(patterns)
+                print("\n-----Instruções Assembly-----")
 
-                for instruction in instructions:
-                    print(instruction)
+                print("\n")
+
+                print(getInstructions(patterns))
 
                 instructionCounter += 1
 
