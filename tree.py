@@ -11,20 +11,13 @@ class Tree():
         self.root = root
         self.scope = []
         self.reducibleInstructions = ["MOVE", "MEM", "+", "-", "*", "/"]
+        self.basicOperation = ["+", "-", "*", "/"]
         self.irreducibleInstructions = ["CONST", "FP", "TEMP"]
         self.instructions = self.reducibleInstructions + self.irreducibleInstructions
         self.validSeparators = [",", "(", ")"]
-
-    def printTree(self, node: Node, indent: str = "", isRight: bool = False):
-        if node is not None:
-            prefix = "└── " if isRight else "┌── "
-            print(indent + prefix + node.instruction)
-            new_indent = indent + ("    " if isRight else "│   ")
-
-            if node.right is not None:
-                self.printTree(node.right, new_indent, True)
-            if node.left is not None:
-                self.printTree(node.left, new_indent, False)
+        
+    def isBasicOperation(self, instruction):
+        return instruction in self.basicOperation
         
     def isIrredutiableInstruction(self, instruction) -> bool:
         """
@@ -46,6 +39,37 @@ class Tree():
         mas o inverso não é verdadeiro.
         """
         return instruction in ["CONST", "TEMP"]
+        
+    def printTree(self, node: Node, indent: str = "", isRight: bool = False):
+        if node is not None:
+            prefix = "└── " if isRight else "┌── "
+            print(indent + prefix + node.instruction)
+            new_indent = indent + ("    " if isRight else "│   ")
+
+            if node.right is not None:
+                self.printTree(node.right, new_indent, True)
+            if node.left is not None:
+                self.printTree(node.left, new_indent, False)
+                
+    def draw(self):
+        self.__draw(self.root)
+    
+    def __draw(self,node:Node, amountSpaces=0):
+        if (node != None):
+            currentAmountSpaces = amountSpaces+4
+            if (node == self.root):
+                print((" "*amountSpaces)+node.instruction)
+                self.__draw(node.right, currentAmountSpaces)
+                self.__draw(node.left, currentAmountSpaces)
+            elif (node.parent.instruction == "MEM" and ((self.isIrredutiableInstruction((((node.instruction).split())[0]))) or self.isBasicOperation(node.instruction)) and node.parent.right == None):
+                print((" "*amountSpaces)+"("+node.instruction+")")
+                self.__draw(node.right, currentAmountSpaces)
+                self.__draw(node.left, currentAmountSpaces)
+            else:
+                print((" "*amountSpaces)+node.instruction)
+                self.__draw(node.right, currentAmountSpaces)
+                self.__draw(node.left, currentAmountSpaces)
+                
     
     def createTree(self, linearCode:str):
         spacelessLinearCode = linearCode.split()
