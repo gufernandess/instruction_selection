@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from tree import *
 from patterns import *
 from instructions import *
@@ -16,12 +14,6 @@ def main():
 
                 tree.createTree(line)
 
-                #print("Gustavo:")
-
-                #tree.printTree(tree.root)
-
-                #print("Gabriel")
-
                 tree.draw()
 
                 print("\n-----Custos-----\n")
@@ -36,8 +28,11 @@ def main():
                 print("Custo total = " + "" + str(calculateCost(patterns)))
 
                 print("\n-----INSTRUÇÕES ASSEMBLY-----")
+                
+                instructions = getInstructions(patterns)
 
-                print(getInstructions(patterns))
+                for instruction in instructions:
+                    print(instruction)
 
                 instructionCounter += 1
 

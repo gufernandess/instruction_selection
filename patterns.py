@@ -2,6 +2,16 @@ from node import Node
 
 patterns = []
 
+'''
+    A ideia aqui foi criar um algoritmo que percorre a árvore de cima para baixo
+    e a cada nó visitado, ele verifica se o nó já foi visitado.
+    Se o nó já foi visitado, ele passa para o próximo nó.
+    Se o nó não foi visitado, ele verifica o padrão do nó
+    e o armazena em uma lista de padrões.
+
+    Aqui os custos são mapeados para cada padrão.
+'''
+
 INSTRUCTION_COSTS = {
     "TEMP": 0,
     "FP": 1,
@@ -23,7 +33,6 @@ INSTRUCTION_COSTS = {
     "MOVE -> MEM" : 1,
     "MOVE -> MEM ===> MEM": 2,
 }
-
 
 def calculateCost(patterns):
     cost = 0
