@@ -1,6 +1,6 @@
 from node import Node
 
-patterns = []
+# patterns = []
 
 '''
     A ideia aqui foi criar um algoritmo que percorre a árvore de cima para baixo
@@ -41,22 +41,22 @@ def calculateCost(patterns):
 
     return cost
 
-def traverseTree(node:Node):
+def traverseTree(node:Node, patterns):
     if node is None:
         return
     
     if node.isUsed:
         if node.right is not None:
-            traverseTree(node.right)
+            traverseTree(node.right, patterns)
         if node.left is not None:
-            traverseTree(node.left)
+            traverseTree(node.left, patterns)
 
     else:
         patterns.append([node, treeToPattern(node)])
     
-        traverseTree(node.right)
+        traverseTree(node.right, patterns)
 
-        traverseTree(node.left)
+        traverseTree(node.left, patterns)
 
     return patterns
 

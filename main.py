@@ -16,16 +16,20 @@ def main():
 
                 tree.draw()
 
-                print("\n-----Custos-----\n")
+                print("\n-----Padrões e custos-----\n")
 
-                patterns = traverseTree(tree.root)
+                patterns = []
+
+                patterns = traverseTree(tree.root, patterns)
 
                 for i in range(len(patterns)):
                     print(patterns[i][1])
 
                 print("\n")
 
-                print("Custo total = " + "" + str(calculateCost(patterns)))
+                cost = calculateCost(patterns)
+
+                print("Custo total = " + "" + str(cost))
 
                 print("\n-----Instruções Assembly-----")
 

@@ -1,1 +1,3 @@
 MOVE ( MEM ( + ( MEM ( + ( FP , CONST a ) ) , * ( TEMP i , CONST 4 ) ) ) , MEM ( + ( FP , CONST x ) ) )
+MOVE ( MEM ( - ( MEM ( + ( TEMP i , CONST 3 ) ) , * ( - ( TEMP x , FP ) , CONST 2 ) ) , CONST 4 ) , MEM ( / ( CONST 6 , FP ) ) )
+MOVE ( MEM ( + ( * ( CONST 0 , MEM ( CONST 2 ) ) , CONST 2 ) ) , MEM ( CONST 10 ) )
